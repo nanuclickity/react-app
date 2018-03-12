@@ -1,0 +1,43 @@
+:local(.container)
+  color inherit
+  
+  .sample-post
+    width 500px
+    border 1px rgba(0,0,0,0.12) solid
+    margin 0 auto
+    
+  .post-image
+    height 300px
+
+  .post-comments 
+    background-color #eee
+    padding 10px
+
+
+:local(.container) .comment-item 
+  display flex
+  flex-direction column
+  padding 4px 4px 4px 20px
+
+  .comment-block, 
+  .comment-actions-block, 
+  .comment-user
+    display flex
+    align-items center
+
+  .user-avatar 
+    width 24px
+    height 24px
+    border-radius 50%
+    background-color $primary
+    margin-right 8px 
+  .user-name 
+    font-weight $font-weight-bold
+    margin-right 20px 
+
+  .comment-action-btn 
+    margin-left 20px
+    font-size 12px
+    &:hover 
+      text-decoration underline
+      cursor pointer
