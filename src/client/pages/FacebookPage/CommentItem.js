@@ -2,9 +2,16 @@ import React, { Component } from 'react'
 
 import moment from 'moment'
 
+import NewComment from './NewComment'
+
 export default class CommentItem extends Component {
   state = {
-    isLoading: false
+    isLoading: false,
+    isReplyActive: false
+  }
+
+  onReplyClick = () => {
+    this.setState({ isReplyActive: true })
   }
 
   onLikeClick = () => {
@@ -25,7 +32,7 @@ export default class CommentItem extends Component {
   }
 
   render() {
-    const { user, message, likesCount, updatedAt } = this.props
+    const { id, user, message, children, likesCount, updatedAt } = this.props
 
     const commentLikes = this.state.isLoading ? (
       <div className="comment-likes rotating-loader" />
@@ -49,9 +56,15 @@ export default class CommentItem extends Component {
           <div className="comment-action-btn" onClick={this.onLikeClick}>
             Like
           </div>
-          <div className="comment-action-btn">Reply</div>
+          <div className="comment-action-btn" onClick={this.onReplyClick}>
+            Reply
+          </div>
           <div className="timestamp">{moment(updatedAt).fromNow()}</div>
         </div>
+        {children}
+        {this.state.isReplyActive && (
+          <NewComment onRequestAdd={msg => this.props.onRequestAdd(msg, id)} />
+        )}
       </div>
     )
   }

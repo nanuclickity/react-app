@@ -24,6 +24,29 @@ class FacebookPage extends Component {
     return list
   }
 
+  renderOneCommentItem = item => {
+    const subcomments = this.getCommentsList()
+      .filter(x => x.id !== item.id)
+      .filter(x => x.id.includes('/') && x.id.includes(item.id))
+      .filter(x => !x.id.replace(`${item.id}/`, '').includes('/'))
+    if (subcomments.length) {
+      console.log('got subcomments: ', item.id, subcomments)
+    }
+    return (
+      <CommentItem
+        id={item.id}
+        user={item.user}
+        message={item.message}
+        likesCount={item.likes.length}
+        updatedAt={item.updatedAt}
+        onRequestAdd={this.props.addComment}
+        onLikeClick={this.props.addLike}
+        key={item.id}>
+        {!!subcomments.length && subcomments.map(this.renderOneCommentItem)}
+      </CommentItem>
+    )
+  }
+
   render() {
     const list = this.getCommentsList()
 
@@ -36,6 +59,8 @@ class FacebookPage extends Component {
         : `${usersWhoLiked[0]} likes this`
       : ''
 
+    const firstLevelList = list.filter(x => !x.id.includes('/'))
+
     return (
       <AppShell className={s.container}>
         <div className="sample-post">
@@ -43,19 +68,7 @@ class FacebookPage extends Component {
           {likesMessage && <div className="post-stats">{likesMessage}</div>}
           <div className="post-comments">
             <NewComment onRequestAdd={this.props.addComment} />
-            {list.map(item => {
-              return (
-                <CommentItem
-                  id={item.id}
-                  user={item.user}
-                  message={item.message}
-                  likesCount={item.likes.length}
-                  updatedAt={item.updatedAt}
-                  onLikeClick={this.props.addLike}
-                  key={item.id}
-                />
-              )
-            })}
+            {firstLevelList.map(this.renderOneCommentItem)}
           </div>
         </div>
       </AppShell>
@@ -70,8 +83,8 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-  addComment(message) {
-    return dispatch(fbActions.addComment(message))
+  addComment(message, parentId) {
+    return dispatch(fbActions.addComment(message, parentId))
   },
   addLike(commentId, fromuser) {
     return dispatch(fbActions.addLike(commentId, fromuser))

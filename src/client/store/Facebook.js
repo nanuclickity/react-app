@@ -4,9 +4,6 @@ import { v4 } from 'node-uuid'
 
 const createAction = str => `FACEBOOK_${str}`
 
-// user name generating counter
-var counter = 1
-
 const INITIAL_STATE = {
   isLoading: false,
   hasError: false,
@@ -21,14 +18,23 @@ function mockAPI(timeout = 1000) {
   })
 }
 
-function insertNewComment(list, message, user, parentId = null) {
+function getLastCounter(list) {
+  return list
+    .map(x => x.user.replace('User ', ''))
+    .map(Number)
+    .sort()
+    .reverse()[0]
+}
+
+function insertNewComment(list, message, parentId = null) {
+  const userIdCount = list.length ? getLastCounter(list) + 1 : 1
   const comment = {
     id: parentId ? `${parentId}/${v4()}` : v4(),
     message,
     createdAt: Date.now(),
     updatedAt: Date.now(),
     likes: [],
-    user: `User ${++counter}`
+    user: `User ${userIdCount}`
   }
 
   return [comment, ...list]
@@ -37,8 +43,7 @@ function insertNewComment(list, message, user, parentId = null) {
 function insertLike(list, commentId, user) {
   return list.map(comment => {
     // checks for target comment
-    // does not add if comment was already liked by user
-    if (comment.id === commentId && comment.likes.every(x => x !== user)) {
+    if (comment.id === commentId) {
       comment.likes.push(user)
       comment.updatedAt = Date.now()
     }
@@ -49,11 +54,15 @@ function insertLike(list, commentId, user) {
 const ADD_COMMENT = createAction('ADD_COMMENT')
 const ADD_COMMENT_SUCCESS = createAction('ADD_COMMENT_SUCCESS')
 const ADD_COMMENT_FAILURE = createAction('ADD_COMMENT_FAILURE')
-const addComment = (message, fromUser) => dispatch => {
+const addComment = (message, parentCommentId) => dispatch => {
   dispatch({ type: ADD_COMMENT })
   return mockAPI()
     .then(() =>
-      dispatch({ type: ADD_COMMENT_SUCCESS, comment: message, fromUser })
+      dispatch({
+        type: ADD_COMMENT_SUCCESS,
+        comment: message,
+        parentCommentId
+      })
     )
     .catch(err => dispatch({ type: ADD_COMMENT_FAILURE, message: err.message }))
 }
@@ -85,7 +94,7 @@ export default function FacebookReducer(state = INITIAL_STATE, action) {
         comments: insertNewComment(
           state.comments,
           action.comment,
-          action.fromUser
+          action.parentCommentId
         )
       }
     case ADD_LIKE_SUCCESS:
