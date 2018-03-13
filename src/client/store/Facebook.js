@@ -1,8 +1,11 @@
 import { v4 } from 'node-uuid'
 
-import sample from 'lodash/sample'
+// import sample from 'lodash/sample'
 
 const createAction = str => `FACEBOOK_${str}`
+
+// user name generating counter
+var counter = 1
 
 const INITIAL_STATE = {
   isLoading: false,
@@ -25,16 +28,19 @@ function insertNewComment(list, message, user, parentId = null) {
     createdAt: Date.now(),
     updatedAt: Date.now(),
     likes: [],
-    user: user || sample(['UserA', 'UserB', 'UserC', 'UserD', 'UserE', 'UserF'])
+    user: `User ${++counter}`
   }
 
-  return [...list, comment]
+  return [comment, ...list]
 }
 
 function insertLike(list, commentId, user) {
   return list.map(comment => {
-    if (comment.id === commentId) {
+    // checks for target comment
+    // does not add if comment was already liked by user
+    if (comment.id === commentId && comment.likes.every(x => x !== user)) {
       comment.likes.push(user)
+      comment.updatedAt = Date.now()
     }
     return comment
   })
