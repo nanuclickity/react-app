@@ -2,8 +2,9 @@ const path = require('path')
 const webpack = require('webpack')
 const nodeExternals = require('webpack-node-externals')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const PATHS = require('./paths')
 
 const LOADERS = require('./scripts/loaders')
@@ -94,9 +95,14 @@ config.plugins = [
     )
   }),
   new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-  new ExtractTextPlugin({
-    filename: 'server.bundle.css',
-    allChunks: true
+  new MiniCssExtractPlugin({
+    filename: 'server.bundle.css'
+  }),
+  new OptimizeCssAssetsPlugin({
+    assetNameRegExp: /\.optimize\.css$/g,
+    cssProcessor: require('cssnano'),
+    cssProcessorOptions: { discardComments: { removeAll: true } },
+    canPrint: true
   })
 ]
 

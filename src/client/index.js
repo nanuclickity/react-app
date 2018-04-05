@@ -70,6 +70,8 @@ if (module.hot) {
   })
 }
 
-if (process.env.NODE_ENV === 'production') {
-  registerServiceWorker()
-}
+// if (process.env.NODE_ENV === 'production') {
+//   registerServiceWorker()
+// }
+
+registerServiceWorker()

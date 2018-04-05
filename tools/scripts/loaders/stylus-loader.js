@@ -1,7 +1,8 @@
 const nib = require('nib')
 const axis = require('axis')
 const rupture = require('rupture')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 const PATHS = require('../../paths')
 
@@ -31,14 +32,12 @@ const LOADER_DEV = isServer => ({
 
 const LOADER_PROD = isServer => ({
   test: /\.styl$/,
-  loader: ExtractTextPlugin.extract({
-    fallback: 'style-loader',
-    use: [
-      _CSS_LOADER(isServer),
-      _POSTCSS_LOADER(isServer),
-      _STYLUS_LOADER(isServer)
-    ]
-  })
+  use: [
+    MiniCssExtractPlugin.loader,
+    _CSS_LOADER(isServer),
+    _POSTCSS_LOADER(isServer),
+    _STYLUS_LOADER(isServer)
+  ]
 })
 
 // To use pre-rendering on server

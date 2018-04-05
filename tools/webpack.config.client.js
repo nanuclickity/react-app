@@ -2,8 +2,9 @@ const path = require('path')
 const webpack = require('webpack')
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin')
 const ManifestPlugin = require('webpack-manifest-plugin')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const WorkboxWebpackPlugin = require('workbox-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const { InjectManifest } = require('workbox-webpack-plugin')
 
 const Config = require('../config')
 
@@ -132,12 +133,17 @@ if (IS_PROD) {
       /\.\/getStaticRoutes/,
       './getDynamicRoutes'
     ),
-    new ExtractTextPlugin({
-      filename: '[name].[contenthash:8].bundle.css',
-      allChunks: true
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].bundle.css',
+      chunkFilename: '[name].[contenthash].chunk.[id].css'
     }),
-
-    new WorkboxWebpackPlugin({
+    new OptimizeCssAssetsPlugin({
+      assetNameRegExp: /\.optimize\.css$/g,
+      cssProcessor: require('cssnano'),
+      cssProcessorOptions: { discardComments: { removeAll: true } },
+      canPrint: true
+    }),
+    new InjectManifest({
       globDirectory: PATHS.BUILD_PUBLIC,
       globPatterns: ['**/*.{css,js}'],
       swSrc: path.join(PATHS.SRC_CLIENT, 'sw.js'),
@@ -160,6 +166,16 @@ config.optimization = {
         minChunks: 2
       }
     }
+  }
+}
+
+if (IS_PROD) {
+  // Combine css assets into one
+  config.optimization.splitChunks.cacheGroups.styles = {
+    name: 'styles',
+    test: /\.css$/,
+    chunks: 'all',
+    enforce: true
   }
 }
 

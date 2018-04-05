@@ -4,14 +4,23 @@
 //   return !navigator.serviceWorker.controller
 // }
 
+const debug = require('debug')('react-app:register-sw')
+
+function onServiceWorkerUpdate(registration) {
+  console.log('service worker found update')
+}
+
 function fetchAndInstallSW() {
   return navigator.serviceWorker
     .register('./sw.js')
     .then(registration => {
-      console.log('RegisteredSW: ', registration)
+      debug('Registered Successfully', registration)
+
+      // This gets fired up, when latest service worker has different files in precache
+      registration.onupdatefound = () => onServiceWorkerUpdate(registration)
     })
     .catch(err => {
-      console.log('ERR_RegisterSW: ', err.message)
+      debug('Cannot register SW', err)
       console.error(err)
     })
 }

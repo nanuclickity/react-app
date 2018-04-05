@@ -11,10 +11,10 @@ import compression from 'compression'
 import getRouter from './routes/index'
 
 import {
-  printAsTable, //eslint-disable-line no-unused-vars
-  handleWorkboxRequests,
-  CachedFileResponseMiddleware
+  printAsTable //eslint-disable-line no-unused-vars
 } from './helpers/common'
+
+import { serveServiceWorker } from 'controllers/startup'
 
 //eslint-disable-next-line
 import { Config } from './config'
@@ -70,14 +70,8 @@ export function configureServer(app) {
     staticOptions.maxAge = '30 days'
   }
 
-  // Serve service worker from root
-  app.get(
-    '/sw.js',
-    CachedFileResponseMiddleware(__dirname + '/public/sw.js', 'text/javascript')
-  )
-
-  // Handle dev and prod versions of service workers
-  app.get(/\/workbox.+\.js/, handleWorkboxRequests)
+  // should we serve a service worker
+  app.use(serveServiceWorker())
 
   // Static assets should be served without cookies
   // and ideally through a cdn
