@@ -144,8 +144,6 @@ if (IS_PROD) {
       canPrint: true
     }),
     new InjectManifest({
-      globDirectory: PATHS.BUILD_PUBLIC,
-      globPatterns: ['**/*.{css,js}'],
       swSrc: path.join(PATHS.SRC_CLIENT, 'sw.js'),
       swDest: path.join(PATHS.BUILD_PUBLIC, 'sw.js')
     }),
