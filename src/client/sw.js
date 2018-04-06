@@ -1,42 +1,61 @@
 /* eslint-disable no-restricted-globals */
 /* globals importScripts, self, workbox */
 
-function onInstallComplete(event) {
+// Checks if event's request is a navigation request
+function isNavigationEvent(event) {
+  return (
+    event.request.mode === 'navigate' ||
+    (event.request.method === 'GET' &&
+      event.request.headers.get('accept').includes('text/html'))
+  )
+}
+
+const Strategies = {
+  fonts: workbox.strategies.staleWhileRevalidate({
+    cacheName: 'fonts',
+    plugins: [
+      new workbox.expiration.Plugin({
+        maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+      })
+    ]
+  })
+}
+
+// Precache
+workbox.precaching.precacheAndRoute(self.__precacheManifest || [])
+// Add a default application shell
+workbox.precaching.precache([{ url: '/app-shell.html', revision: '1.0' }])
+
+// Runtime Cache
+workbox.routing.registerRoute(
+  /https:\/\/fonts.(googleapis|gstatic).com/,
+  Strategies.fonts
+)
+
+// Event Listeners
+self.addEventListener('install', function onInstallComplete(event) {
   const promises = [
     // Stuff to do when install completes
   ]
   event.waitUntil(Promise.all(promises))
-}
-
-// Asset Strategies
-const fontAssetStrategy = workbox.strategies.staleWhileRevalidate({
-  cacheName: 'fonts',
-  plugins: [
-    new workbox.expiration.Plugin({
-      maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
-    })
-  ]
 })
 
-// Event Listeners
-self.addEventListener('install', onInstallComplete)
+self.addEventListener('activate', function onActivate(event) {
+  const promises = [
+    // Stuff to do when sw activates
+  ]
+  event.waitUntil(Promise.all(promises))
+})
 
-// Runtime caching
-workbox.routing.registerRoute(
-  /https:\/\/fonts.googleapis.com/,
-  fontAssetStrategy
-)
+self.addEventListener('message', function onMessage(event) {
+  // Do something when sw receives a message
+})
 
-workbox.routing.registerRoute(/https:\/\/fonts.gstatic.com/, fontAssetStrategy)
+self.addEventListener('fetch', function onFetch(event) {
+  // If request is navigation request
+  if (isNavigationEvent(event)) {
+    event.respondWith(caches.match('/app-shell.html'))
+  }
 
-// workbox.routing.registerNavigationRoute(
-//   '/app-shell.html',
-//   workbox.strategies.staleWhileRevalidate({
-//     cacheName: 'offline-pages'
-//   })
-// )
-
-/******  DO NOT TOUCH *******
- * This is filled automatically by workbox-plugin
- */
-workbox.precaching.precacheAndRoute(self.__precacheManifest || [])
+  // Add additional fetch handlers here
+})

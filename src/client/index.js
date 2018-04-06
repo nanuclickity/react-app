@@ -40,7 +40,9 @@ const onRenderComplete = () => {
 
   // Delete the server generated styles to avoid conflicts in hmr
   if (__DEV__) {
-    document.getElementById('server-css').remove()
+    setTimeout(() => {
+      document.getElementById('server-css').remove()
+    }, 0)
   }
 }
 
@@ -70,8 +72,6 @@ if (module.hot) {
   })
 }
 
-// if (process.env.NODE_ENV === 'production') {
-//   registerServiceWorker()
-// }
-
-registerServiceWorker()
+if (process.env.NODE_ENV === 'production') {
+  registerServiceWorker()
+}

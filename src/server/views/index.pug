@@ -8,6 +8,7 @@ mixin lazy_scripts()
       }
       
       var css = [
+        '#{webpack_assets["main.css"]}',
         'https://fonts.googleapis.com/icon?family=Material+Icons',
         'https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700'
       ]
@@ -31,8 +32,8 @@ block preload
 block head_styles
   style(id='server-css' type='text/css' rel='stylesheet') __inject_critical_css__
 
-  if is_prod
-    link(rel='stylesheet' type='text/css' href= webpack_assets['main.css'])
+  //- if is_prod
+  //-   link(rel='stylesheet' type='text/css' href= webpack_assets['main.css'])
 
 block head_scripts
   script(type='text/javascript').

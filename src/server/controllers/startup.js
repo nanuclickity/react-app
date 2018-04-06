@@ -20,12 +20,6 @@ const WORKBOX_FILE_PATH = path.join(
   '../node_modules/workbox-sw/build/workbox-sw.js'
 )
 
-debug(`
-  Paths:
-  ${SW_FILE_PATH}
-  ${WORKBOX_FILE_PATH}
-`)
-
 const serveCachedFile = (filePath, mimeType = 'text/plain') => (
   req,
   res,
