@@ -1,6 +1,7 @@
 import path from 'path'
 import { Router } from 'express'
 import { getTemplateData } from '../renderer/render-template' //eslint-disable-line no-unused-vars
+import APIRouter from './api'
 
 const router = Router()
 
@@ -35,6 +36,9 @@ const handleAppShellRequest = (req, res, next) => {
 export default function getRouter(app) {
   // Health check
   router.get('/ping', (req, res) => res.status(200).send('pong'))
+
+  // API
+  router.use('/api', APIRouter)
 
   // No server rendering
   router.get('*', handleStaticFiles, (req, res) => {
