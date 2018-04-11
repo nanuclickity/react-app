@@ -40,8 +40,9 @@ const onRenderComplete = () => {
 
   // Delete the server generated styles to avoid conflicts in hmr
   if (__DEV__) {
+    let css = document.getElementById('server-css')
     setTimeout(() => {
-      document.getElementById('server-css').remove()
+      css && css.remove()
     }, 0)
   }
 }
