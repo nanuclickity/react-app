@@ -46,12 +46,12 @@ export default function getRouter(app) {
   // })
 
   // Server rendering
-  router.get(
-    '*',
-    handleStaticFiles,
-    handleAppShellRequest,
-    require('../renderer').StreamingRenderer
-  )
+  // router.get(
+  //   '*',
+  //   handleStaticFiles,
+  //   handleAppShellRequest,
+  //   require('../renderer').StreamingRenderer
+  // )
 
   return router
 }

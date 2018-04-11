@@ -11,12 +11,17 @@ const ContactPage = AsyncComponent(() =>
   import(/* webpackChunkName: 'ContactPage' */ 'pages/ContactPage')
 )
 
+const FacebookPage = AsyncComponent(() =>
+  import(/* webpackChunkName: 'FacebookPage' */ 'pages/FacebookPage')
+)
+
 // Pass location to switch component, so history updates don't block app from re-rendering
 export default function Pages(location, auth) {
   return {
     NotFoundPage,
     HomePage,
     AboutPage,
-    ContactPage
+    ContactPage,
+    FacebookPage
   }
 }

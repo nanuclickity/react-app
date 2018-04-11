@@ -18,11 +18,11 @@ const history = createHistory()
 const initialState = window.INITIAL_STATE || {}
 
 // Check if a localState is present
-// const localState = loadLocalState() || {}
+const localState = loadLocalState() || {}
 
 // Combine the final state
 const finalState = {
-  // ...localState,
+  ...localState,
   ...initialState
 }
 
@@ -30,9 +30,9 @@ const finalState = {
 const store = configureStore(finalState, history)
 
 // Save a local copy whenever store changes
-// store.subscribe(() => {
-//   saveLocalState(store.getState())
-// })
+store.subscribe(() => {
+  saveLocalState(store.getState())
+})
 
 const onRenderComplete = () => {
   console.timeEnd('react:rendered-in')

@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom'
 
 const NAVIGATION_ITEMS = [
   { href: '/about', label: 'ABOUT' },
-  { href: '/contact', label: 'CONTACT' }
+  { href: '/contact', label: 'CONTACT' },
+  { href: '/fb-page', label: 'FACEBOOK' }
 ]
 
 const Navigation = props => (
