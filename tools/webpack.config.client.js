@@ -22,6 +22,8 @@ const envOption = (prod, dev, test) => {
 // Initialize config
 const config = {}
 
+config.node = false
+
 // Don't build in case of errors, on prod
 config.bail = IS_PROD
 
