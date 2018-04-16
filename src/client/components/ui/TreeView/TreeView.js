@@ -5,6 +5,8 @@ import classnames from 'classnames'
 import cloneDeep from 'lodash/cloneDeep'
 import isEqual from 'lodash/isEqual'
 
+import { flattenTree } from './utils'
+
 import TreeItem from './TreeItem'
 
 // [TODO] this is temporary just for testing
@@ -35,7 +37,8 @@ export default class TreeView extends Component {
 
   state = {
     items: [],
-    isTreeOpen: true
+    isTreeOpen: true,
+    searchQuery: ''
   }
 
   componentDidMount = () => {
@@ -141,8 +144,44 @@ export default class TreeView extends Component {
     )
   }
 
-  render() {
+  renderTree = () => {
     const { items } = this.state
+    return !items.length
+      ? this.renderNoItems()
+      : items.map(this.renderOneTreeItem)
+  }
+
+  renderSearchResults = () => {
+    const { items, searchQuery } = this.state
+    const flatResults = flattenTree(items)
+    const matchedResults = flatResults.filter(x => x.name.includes(searchQuery))
+
+    return matchedResults.map(this.renderOneSearchResult)
+  }
+
+  renderOneSearchResult = (item, index) => {
+    return (
+      <div
+        key={item.id}
+        className="ui-tree-view-search-result"
+        onClick={e => this.handleItemClick(item, index, e)}>
+        <div className="tree-leaf-inner">
+          <div className="leaf-image" />
+          <div className="leaf-details">
+            <div className="leaf-title">{item.name}</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  handleSearchChange = e => {
+    const searchQuery = e.target.value
+    this.setState({ searchQuery })
+  }
+
+  render() {
+    const { items, searchQuery } = this.state
     debug('will be rendering items: ', items, s)
 
     // allow composition in to different pages or projects.
@@ -161,9 +200,15 @@ export default class TreeView extends Component {
           <i className="material-icons">menu</i>
         </div>
         <div className="ui-tree-view-list">
-          {!items.length
-            ? this.renderNoItems()
-            : items.map(this.renderOneTreeItem)}
+          <div className="ui-tree-view-search">
+            <input
+              className="ui-tree-view-search-input"
+              placeholder="Search"
+              onChange={this.handleSearchChange}
+              value={this.state.searchQuery}
+            />
+          </div>
+          {!searchQuery ? this.renderTree() : this.renderSearchResults()}
         </div>
       </div>
     )
