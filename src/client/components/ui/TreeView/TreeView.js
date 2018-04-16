@@ -96,11 +96,17 @@ export default class TreeView extends Component {
     //  - leaf open/close state can be handled inside object itself rather than state
   }
 
+  /**
+   * renders tree items recursively
+   * digs into `children` array of each item
+   */
   renderOneTreeItem = (item, index) => {
+    const totalChildrenCount = this.countAllChildren(item)
     return (
       <TreeItem
         id={item.id}
         title={item.name}
+        subtitle={`${totalChildrenCount} Members`}
         key={item.id} // try to keep this unique
         className={this.props.itemClassName}
         onItemClick={e => this.handleItemClick(item, index, e)}>
@@ -111,6 +117,22 @@ export default class TreeView extends Component {
     )
   }
 
+  countAllChildren = item => {
+    let count = (item.children || []).length
+
+    let finalCount = (item.children || []).reduce((nextCount, subitem) => {
+      if (Array.isArray(subitem.children)) {
+        nextCount += this.countAllChildren(subitem)
+      }
+      return nextCount
+    }, count)
+
+    return finalCount
+  }
+
+  /**
+   * What to show when no items are available in tree
+   */
   renderNoItems = () => {
     return (
       <div className="no-tree-items">

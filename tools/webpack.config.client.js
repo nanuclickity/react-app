@@ -22,8 +22,6 @@ const envOption = (prod, dev, test) => {
 // Initialize config
 const config = {}
 
-config.node = false
-
 // Don't build in case of errors, on prod
 config.bail = IS_PROD
 
@@ -35,6 +33,8 @@ config.devtool = envOption('source-map', 'cheap-module-source-map', false)
 config.cache = IS_DEV
 
 config.target = 'web'
+
+// config.externals = ['crypto']
 
 config.stats = {
   modules: false,
