@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import classnames from 'classnames'
 
+import PlayerControls from './PlayerControls'
+
+import AlbumView from './AlbumView'
+
 import s from './MusicPage.styl'
 
 export default class MusicPage extends Component {
@@ -8,7 +12,8 @@ export default class MusicPage extends Component {
     const cx = classnames(s.container)
     return (
       <div className={cx}>
-        <div className="header"> Music Page </div>
+        <AlbumView />
+        <PlayerControls />
       </div>
     )
   }
