@@ -160,10 +160,9 @@ config.optimization = {
     name: true,
     cacheGroups: {
       vendors: {
+        test: /\/node_modules\//,
         name: 'vendors',
-        chunks: 'all',
-        enforce: true,
-        minChunks: 2
+        minChunks: 3
       }
     }
   }
